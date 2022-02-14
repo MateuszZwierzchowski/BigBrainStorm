@@ -5,155 +5,247 @@
 //  Created by Mateusz Zwierzchowski on 18/12/2021.
 //
 
+
 import SwiftUI
 
 struct ContentView: View {
     @StateObject var nodes = Nodes()
-    @State var matrix = Matrix()
+    @StateObject var matrix = Matrix()
     @State var showSidebar: Bool = false
     @State var id = 0
-    @State var tab = [0.0,0.1,0.2]
+    @State var currentScale: CGFloat = 0
+    @State var finalScale: CGFloat = 1
     
     var body: some View {
-        
         SideBarStack(sidebarWidth: 200, showSidebar: $showSidebar) {
             NavigationView{
                 VStack(){
-                    Form {
-                        Section {
-                            TextField("\(nodes.n_array[id].text)", text: $nodes.n_array[id].text)
-                            } header: { Text("Tekst") }
-                        
-                        Section {
-                                Picker("Czerwony", selection: $nodes.n_array[id].red) {
-                                    
-                                    ForEach(0...255, id: \.self) { red in
-                                        Text("\(red)")
-                                    }
-                                    
+                    if nodes.n_array.count != 0 {
+                        Form {
+                            Section {
+                                TextField("\(nodes.n_array[id].text)", text: $nodes.n_array[id].text)
+                            } header: { Text("Text") }
+                            
+                            Section {
+                                HStack{
+                                    Text("Red")
+                                    Slider(value: $nodes.n_array[id].red, in: 0...255, step: 1.0)
                                 }
                                 
-                                
-                                Picker("Zielony", selection: $nodes.n_array[id].green) {
-                                    
-                                    ForEach(0...255, id: \.self) { green in
-                                        Text("\(green)")
-                                    }
-                                    
+                                HStack{
+                                    Text("Green")
+                                    Slider(value: $nodes.n_array[id].green, in: 0...255, step: 1.0)
                                 }
                                 
-                                Picker("Niebieski", selection: $nodes.n_array[id].blue) {
-                                    
-                                    ForEach(0...255, id: \.self) { blue in
-                                        Text("\(blue)")
+                                HStack{
+                                    Text("Blue")
+                                    Slider(value: $nodes.n_array[id].blue, in: 0...255, step: 1.0)
+                                }
+                                
+                            } header: { Text("Color") }
+                            
+                            Section {
+                                List {
+                                    Picker("Shape", selection: $nodes.n_array[id].shape) {
+                                        Text("Circle").tag(ChooseSchape.circle)
+                                        Text("Rectangle").tag(ChooseSchape.rectangle)
+                                    }
+                                }
+                            } header: { Text("Shape") }
+                            
+                            Section {
+                                if nodes.n_array[id].shape == .circle {
+                                    HStack{
+                                        Text("Radius")
+                                        Slider(value: $nodes.n_array[id].height, in: 32...100, step: 1.0)
+                                    }
+                                } else {
+                                    HStack{
+                                        Text("Height")
+                                        Slider(value: $nodes.n_array[id].height, in: 32...100, step: 1.0)
                                     }
                                     
+                                    HStack{
+                                        Text("Width")
+                                        Slider(value: $nodes.n_array[id].width, in: 32...100, step: 1.0)
+                                    }
                                 }
+                                
+                            } header: { Text("Size") }
                             
-                        } header: { Text("Kolor") }
-                             
-                    }
-                    HStack(){
-                    
-                        
-                        Button(action:
-                                {
+                            Section {
+                                
+                                ForEach(nodes.n_array) { i in
+                                    if id != i.id {
+                                        HStack {
+                                            Spacer()
+                                            Text(i.text)
+                                            Spacer()
+                                            Button(action:
+                                                    {
+                                                matrix.arr[id][i.id] = !matrix.arr[id][i.id]
+                                                matrix.arr[i.id][id] = matrix.arr[id][i.id]
+                                            }) {
+                                                if matrix.arr[id][i.id] {
+                                                    Text("ON").fontWeight(.bold).ONStyle()
+                                                }
+                                                else {
+                                                    Text("OFF").fontWeight(.bold).OFFStyle()
+                                                }
+                                            }
+                                            Spacer()
+                                        }
+                                    }
+                                }
+                            }header: { Text("Connections") }
                             
-                        }) {
-                            
-                            Text("Usuń")
-                                .fontWeight(.bold)
-                                .font(.body)
-                                .padding(EdgeInsets(top: 10, leading: 50, bottom: 10, trailing: 50))
-                                .background(Color.red)
-                                .foregroundColor(.white)
-                                .cornerRadius(20)
                         }
                         
+                        HStack(){
+                            Button(action:
+                                    {
+                                matrix.deleteNode(id: id)
+                                id = nodes.deleteNode(id: id)
+                                
+                            }) {
+                                
+                                Text("Delete").deleteStyle()
+                                
+                            }
+                        }
                     }
                 }
-                }
+            }
             
-                } content: {
-                    ZStack{
-                        ZStack {
-                            ForEach(0..<matrix.arr.count) { x in
-                                ForEach(0..<matrix.arr[x].count) { y in
-                                    if matrix.arr[x][y] == 1 {
-                                        makeLine(from: nodes.n_array[x], to: nodes.n_array[y])
-                                    }
+        } content: {
+            
+            NavigationView {
+                ZStack{
+                    ZStack {
+                        ForEach(nodes.n_array) { x in
+                            ForEach(nodes.n_array) { y in
+                                if matrix.arr[x.id][y.id] {
+                                    makeLine(from: nodes.n_array[x.id], to: nodes.n_array[y.id])
                                 }
                             }
-                            
-                            
-                            ForEach($nodes.n_array) { $node in
-                                node.drawShape()
-                                    .gesture(DragGesture()
-                                        .onChanged { value in
-                                            node.offsetX = value.translation.width
-                                            node.offsetY = value.translation.height
-                                        }
-                                        .onEnded { value in
-                                            node.x += node.offsetX
-                                            node.y += node.offsetY
-                                            node.offsetX = 0
-                                            node.offsetY = 0
-                                        }
-                                    )
-                                    .onTapGesture(count: 2){
-                                        withAnimation{
-                                            showSidebar = true
-                                            id = node.id
-                                        }
+                        }
+                        
+                        ForEach($nodes.n_array) { $node in
+                            node.drawShape()
+                                .gesture(DragGesture()
+                                            .onChanged { value in
+                                    node.offsetX = value.translation.width
+                                    node.offsetY = value.translation.height
+                                }
+                                            .onEnded { value in
+                                    node.x += node.offsetX
+                                    node.y += node.offsetY
+                                    node.offsetX = 0
+                                    node.offsetY = 0
+                                }
+                                )
+                                .onTapGesture(count: 2){
+                                    withAnimation{
+                                        showSidebar = true
+                                        id = node.id
                                     }
-                            }
+                                }
                         }
+                    }
+                }
+            }
+            
+            Button(action:
+                    {
+                var nodesSave: String = "["
+                for i in 0..<nodes.n_array.count {
+                    nodesSave += """
+                                {
+                                    "id": \(nodes.n_array[i].id),
+                                    "x": \(nodes.n_array[i].x),
+                                    "y": \(nodes.n_array[i].y),
+                                    "text": \"\(nodes.n_array[i].text)\",
+                                    "red": \(nodes.n_array[i].red),
+                                    "green": \(nodes.n_array[i].green),
+                                    "blue": \(nodes.n_array[i].blue),
+                                    "shape": \"\(nodes.n_array[i].shape)\",
+                                    "width": \(nodes.n_array[i].width),
+                                    "height": \(nodes.n_array[i].height)
+                                },
+                            """
+                }
+                nodesSave += "]"
+                
+                var edgesSave: String = "["
+                for x in 0..<matrix.arr.count {
+                    for y in x+1..<matrix.arr.count {
+                        if matrix.arr[x][y] {
+                            edgesSave += """
+                                        
+                                        {
+                                            "n1": \(x),
+                                            "n2": \(y)
+                                        },
+                                        """
                         }
-                    Button(action:
-                            {
-                        
-                    }) {
-                        Text("Zapisz")
-                            .fontWeight(.bold)
-                            .font(.body)
-                            .padding(8)
-                            .background(Color.green)
-                            .cornerRadius(20)
-                            .foregroundColor(.white)
                     }
-                    .position(x: UIScreen.main.bounds.width * 69/100, y: 20)
+                }
+                edgesSave += "]"
+                
+                let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+                let dataPath = documentsDirectory.appendingPathComponent("BrainStormSaves")
+                
+                do {
+                    try FileManager.default.createDirectory(atPath: dataPath.path, withIntermediateDirectories: true, attributes: nil)
+                } catch let error as NSError {
+                    print("Error creating directory: \(error.localizedDescription)")
+                }
+                
+                let filename1 = dataPath.appendingPathComponent("asdfX.json")
+                let filename2 = dataPath.appendingPathComponent("asdfY.json")
+                
+                print(filename1.path)
+                print(filename2.path)
+                
+                
+                do {
+                    try nodesSave.write(to: filename1, atomically: true, encoding: String.Encoding.utf8)
+                } catch {
                     
-                    Button(action:
-                            {
-                        nodes.n_array.append(Node(from: Decoder) throws -> {
-                            id = 6
-                            x = 0
-                            y = 0
-                            text = "F"
-                            red = 150
-                            green = 150
-                            blue = 150
-                            shape = 1
-                        })
-                        
-                    }) {
-                        Text("Dodaj+")
-                            .fontWeight(.bold)
-                            .font(.body)
-                            .padding(8)
-                            .background(Color.blue)
-                            .cornerRadius(20)
-                            .foregroundColor(.white)
-                    }
-                    .position(x: UIScreen.main.bounds.width * 89/100, y: 20)
-                    
-                }.edgesIgnoringSafeArea(.bottom)
+                }
+                
+                
+                do {
+                    try edgesSave.write(to: filename2, atomically: true, encoding: String.Encoding.utf8)
+                } catch {
+                }
+            }) {
+                Text("Save").saveStyle()
+                
+            }
+            .position(x: UIScreen.main.bounds.width * 69/100, y: 20)
+            
+            Button(action:
+                    {
+                nodes.n_array.append(Node(id: nodes.n_array.count, x: 30, y: 30, text: "New", red: 190, green: 190, blue: 190, shape: ChooseSchape.circle))
+                id = nodes.n_array.count-1
+                matrix.arr.append(Array(repeating: false, count: nodes.n_array.count))
+                for i in (0..<nodes.n_array.count-1)  {
+                    self.matrix.arr[i].append(false)
+                }
+            }) {
+                Text("Add+").addStyle()
+            }
+            .position(x: UIScreen.main.bounds.width * 89/100, y: 20)
+            
+        }
     }
 }
 
 
-struct ContentView_Previews: PreviewProvider {
+struct ContentView_Previews: PreviewProvider{
     static var previews: some View {
         ContentView()
+            .previewInterfaceOrientation(.portrait)
     }
 }

@@ -14,6 +14,7 @@
 		7A40FD20278C4722004BBEEE /* Edge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A40FD19278C4722004BBEEE /* Edge.swift */; };
 		7A40FD21278C4722004BBEEE /* edges.json in Resources */ = {isa = PBXBuildFile; fileRef = 7A40FD1A278C4722004BBEEE /* edges.json */; };
 		7A40FD22278C4722004BBEEE /* Matrix.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A40FD1B278C4722004BBEEE /* Matrix.swift */; };
+		7A7216D527BA9644008D1411 /* ViewModifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A7216D427BA9644008D1411 /* ViewModifiers.swift */; };
 		7A7B6741276D57D700E2964D /* BigBrainStormApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A7B6740276D57D700E2964D /* BigBrainStormApp.swift */; };
 		7A7B6743276D57D700E2964D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A7B6742276D57D700E2964D /* ContentView.swift */; };
 		7A7B6745276D57D900E2964D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7A7B6744276D57D900E2964D /* Assets.xcassets */; };
@@ -31,6 +32,7 @@
 		7A40FD19278C4722004BBEEE /* Edge.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Edge.swift; sourceTree = "<group>"; };
 		7A40FD1A278C4722004BBEEE /* edges.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = edges.json; sourceTree = "<group>"; };
 		7A40FD1B278C4722004BBEEE /* Matrix.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Matrix.swift; sourceTree = "<group>"; };
+		7A7216D427BA9644008D1411 /* ViewModifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModifiers.swift; sourceTree = "<group>"; };
 		7A7B673D276D57D700E2964D /* BigBrainStorm.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BigBrainStorm.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7A7B6740276D57D700E2964D /* BigBrainStormApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BigBrainStormApp.swift; sourceTree = "<group>"; };
 		7A7B6742276D57D700E2964D /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -73,6 +75,7 @@
 			children = (
 				7A7B6740276D57D700E2964D /* BigBrainStormApp.swift */,
 				7A7B6742276D57D700E2964D /* ContentView.swift */,
+				7A7216D427BA9644008D1411 /* ViewModifiers.swift */,
 				7ACB15DA279882E800C6BAE6 /* SideBar.swift */,
 				7A40FD19278C4722004BBEEE /* Edge.swift */,
 				7A40FD16278C4722004BBEEE /* Edges.swift */,
@@ -179,6 +182,7 @@
 				7A40FD22278C4722004BBEEE /* Matrix.swift in Sources */,
 				7A40FD20278C4722004BBEEE /* Edge.swift in Sources */,
 				7A7B6743276D57D700E2964D /* ContentView.swift in Sources */,
+				7A7216D527BA9644008D1411 /* ViewModifiers.swift in Sources */,
 				7A7B674F276D593700E2964D /* Node.swift in Sources */,
 				7A40FD1F278C4722004BBEEE /* Line.swift in Sources */,
 				7ACB15DB279882E800C6BAE6 /* SideBar.swift in Sources */,
